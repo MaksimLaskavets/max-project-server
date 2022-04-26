@@ -1,43 +1,34 @@
-const UserModel = require("../model/user");
+const PostModel = require("../model/post");
 
 exports.create = async (req, res) => {
-  if (
-    !req.body.email &&
-    !req.body.firstName &&
-    !req.body.lastName &&
-    !req.body.password &&
-    !req.body.phone
-  ) {
+  if (!req.body.title && !req.body.body && !req.body.id) {
     res.status(400).send({ message: "Content can not be empty!" });
   }
 
-  const user = new UserModel({
-    email: req.body.email,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    password: req.body.password,
-    phone: req.body.phone,
+  const post = new PostModel({
+    title: req.body.title,
+    body: req.body.body,
   });
 
-  await user
+  await post
     .save()
     .then((data) => {
       res.send({
-        message: "User created successfully!!",
-        user: data,
+        message: "Post created successfully!!",
+        post: data,
       });
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while creating user",
+        message: err.message || "Some error occurred while creating post",
       });
     });
 };
 
 exports.findAll = async (req, res) => {
   try {
-    const user = await UserModel.find();
-    res.status(200).json(user);
+    const post = await PostModel.find();
+    res.status(200).json(post);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -45,8 +36,8 @@ exports.findAll = async (req, res) => {
 
 exports.findOne = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.params.id);
-    res.status(200).json(user);
+    const post = await PostModel.findById(req.params.id);
+    res.status(200).json(post);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -61,14 +52,14 @@ exports.update = async (req, res) => {
 
   const id = req.params.id;
 
-  await UserModel.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+  await PostModel.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
     .then((data) => {
       if (!data) {
         res.status(404).send({
-          message: `User not found.`,
+          message: `Post not found.`,
         });
       } else {
-        res.send({ message: "User updated successfully." });
+        res.send({ message: "Post updated successfully." });
       }
     })
     .catch((err) => {
@@ -79,15 +70,15 @@ exports.update = async (req, res) => {
 };
 
 exports.destroy = async (req, res) => {
-  await UserModel.findByIdAndRemove(req.params.id)
+  await PostModel.findByIdAndRemove(req.params.id)
     .then((data) => {
       if (!data) {
         res.status(404).send({
-          message: `User not found.`,
+          message: `Post not found.`,
         });
       } else {
         res.send({
-          message: "User deleted successfully!",
+          message: "Post deleted successfully!",
         });
       }
     })

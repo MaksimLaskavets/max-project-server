@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 const dbConfig = require("./config/database.config.js");
 const UserRoute = require("./app/routes/User");
+const PostRoute = require("./app/routes/Post");
 
 const app = express();
 
@@ -16,7 +17,7 @@ mongoose
     useNewUrlParser: true,
   })
   .then(() => {
-    console.log("Databse Connected Successfully!!");
+    console.log("Database Connected Successfully!!");
   })
   .catch((err) => {
     console.log("Could not connect to the database", err);
@@ -24,7 +25,7 @@ mongoose
   });
 
 app.get("/", (req, res) => {
-  res.json({ message: "Hello Crud Node Express" });
+  res.json({ message: "Hello max-project-server" });
 });
 
 app.listen(3000, () => {
@@ -32,3 +33,4 @@ app.listen(3000, () => {
 });
 
 app.use("/user", UserRoute);
+app.use("/post", PostRoute);
