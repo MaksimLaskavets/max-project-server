@@ -5,8 +5,7 @@ exports.create = async (req, res) => {
     !req.body.email &&
     !req.body.firstName &&
     !req.body.lastName &&
-    !req.body.password &&
-    !req.body.phone
+    !req.body.password
   ) {
     res.status(400).send({ message: "Content can not be empty!" });
   }
@@ -16,7 +15,6 @@ exports.create = async (req, res) => {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     password: req.body.password,
-    phone: req.body.phone,
   });
 
   await user
