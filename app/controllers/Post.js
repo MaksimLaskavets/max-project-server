@@ -36,7 +36,7 @@ exports.findAll = async (req, res) => {
 
 exports.findOne = async (req, res) => {
   try {
-    const post = await PostModel.findById(req.params.id);
+    const post = await PostModel.findById(req);
     res.status(200).json(post);
   } catch (error) {
     res.status(404).json({ message: error.message });

@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const dbConfig = require("./config/database.config.js");
 const UserRoute = require("./app/routes/User");
 const PostRoute = require("./app/routes/Post");
+const AuthRoutes = require("./app/routes/authRoutes");
 
 const app = express();
 
@@ -34,3 +35,4 @@ app.listen(3000, () => {
 
 app.use("/user", UserRoute);
 app.use("/post", PostRoute);
+app.use(AuthRoutes);
