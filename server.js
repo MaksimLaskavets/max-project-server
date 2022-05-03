@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
 
 const dbConfig = require("./config/database.config.js");
 const UserRoute = require("./app/routes/User");
@@ -12,6 +13,7 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 mongoose.Promise = global.Promise;
 mongoose
@@ -25,6 +27,18 @@ mongoose
     console.log("Could not connect to the database", err);
     process.exit();
   });
+
+app.get("/set-cookies", (req, res) => {
+  res.cookie("userName", "Max");
+  res.cookie("isAuthenticated", true, { httpOnly: true });
+  res.send("cookies are set");
+});
+
+app.get("/get-cookies", (req, res) => {
+  const cookies = req.cookies;
+  console.log(cookies);
+  res.json(cookies);
+});
 
 app.get("/", (req, res) => {
   res.json({ message: "Hello max-project-server" });
