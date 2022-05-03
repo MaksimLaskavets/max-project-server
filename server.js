@@ -1,7 +1,13 @@
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credential: true,
+  optionSuccessStatus: 200,
+};
 
 const dbConfig = require("./config/database.config.js");
 const UserRoute = require("./app/routes/User");
@@ -11,6 +17,7 @@ const CommentRoutes = require("./app/routes/Comment");
 
 const app = express();
 
+app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
