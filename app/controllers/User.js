@@ -1,20 +1,16 @@
 const UserModel = require("../model/user");
 
 exports.create = async (req, res) => {
-  if (
-    !req.body.email &&
-    !req.body.name &&
-    !req.body.userName &&
-    !req.body.password
-  ) {
+  if (!req.body.email && !req.body.name && !req.body.password) {
     res.status(400).send({ message: "Content can not be empty!" });
   }
 
+  const { email, name, password } = req.body;
+
   const user = new UserModel({
-    email: req.body.email,
-    name: req.body.name,
-    userName: req.body.userName,
-    password: req.body.password,
+    email: email,
+    name: name,
+    password: password,
   });
 
   await user
