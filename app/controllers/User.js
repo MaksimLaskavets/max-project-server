@@ -72,7 +72,7 @@ exports.update = async (req, res) => {
     });
 };
 
-exports.destroy = async (req, res) => {
+exports.remove = async (req, res) => {
   await UserModel.findByIdAndRemove(req.params.id)
     .then((data) => {
       if (!data) {

@@ -1,28 +1,46 @@
 const PostModel = require("../model/post");
+const User = require("../model/user");
 
 exports.create = async (req, res) => {
-  if (!req.body.title && !req.body.body && !req.body.id) {
-    res.status(400).send({ message: "Content can not be empty!" });
-  }
+  try {
+    const { title, body, user } = req.body;
 
-  const post = new PostModel({
-    title: req.body.title,
-    body: req.body.body,
-  });
+    if (!title && !body && !user) {
+      res.status(400).send({ message: "Content can not be empty!" });
+    }
 
-  await post
-    .save()
-    .then((data) => {
-      res.send({
-        message: "Post created successfully!!",
-        post: data,
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while creating post",
-      });
+    const currentUser = User.findById(user);
+
+    if (!currentUser) {
+      res.status(400).send({ message: "User doesn't exist " });
+    }
+
+    const post = new PostModel({
+      title: title,
+      body: body,
+      user: user,
     });
+
+    const newPost = await post.save();
+
+    currentUser.posts.push(post._id);
+
+    await currentUser
+      .save()
+      .then((newPost) => {
+        res.send({
+          message: "Post created successfully!!",
+          post: newPost,
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: err.message || "Some error occurred while creating post",
+        });
+      });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
 exports.findAll = async (req, res) => {
@@ -36,7 +54,7 @@ exports.findAll = async (req, res) => {
 
 exports.findOne = async (req, res) => {
   try {
-    const post = await PostModel.findById(req.params.id);
+    const post = await PostModel.findById(req.params.id).populate("user");
     res.status(200).json(post);
   } catch (error) {
     res.status(404).json({ message: error.message });
