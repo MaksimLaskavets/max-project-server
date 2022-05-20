@@ -9,7 +9,7 @@ exports.create = async (req, res) => {
       res.status(400).send({ message: "Content can not be empty!" });
     }
 
-    const currentUser = User.findById(user);
+    const currentUser = await User.findById(user);
 
     if (!currentUser) {
       res.status(400).send({ message: "User doesn't exist " });
@@ -24,6 +24,8 @@ exports.create = async (req, res) => {
     const newPost = await post.save();
 
     currentUser.posts.push(post._id);
+
+    console.log(post);
 
     await currentUser
       .save()
