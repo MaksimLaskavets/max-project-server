@@ -1,6 +1,6 @@
-const CommentModel = require("../model/comment");
+import CommentModel from "../model/comment.js";
 
-exports.create = async (req, res) => {
+export const create = async (req, res) => {
   if (!req.body.name && !req.body.body) {
     res.status(400).send({ message: "Content can not be empty!" });
   }
@@ -25,7 +25,7 @@ exports.create = async (req, res) => {
     });
 };
 
-exports.findAll = async (req, res) => {
+export const findAll = async (req, res) => {
   try {
     const comment = await CommentModel.find();
     res.status(200).json(comment);
@@ -34,7 +34,7 @@ exports.findAll = async (req, res) => {
   }
 };
 
-exports.findOne = async (req, res) => {
+export const findOne = async (req, res) => {
   try {
     const comment = await CommentModel.findById(req.params.id);
     res.status(200).json(comment);
@@ -43,7 +43,7 @@ exports.findOne = async (req, res) => {
   }
 };
 
-exports.update = async (req, res) => {
+export const update = async (req, res) => {
   if (!req.body) {
     res.status(400).send({
       message: "Data to update can not be empty!",
@@ -71,7 +71,7 @@ exports.update = async (req, res) => {
     });
 };
 
-exports.destroy = async (req, res) => {
+export const destroy = async (req, res) => {
   await CommentModel.findByIdAndRemove(req.params.id)
     .then((data) => {
       if (!data) {

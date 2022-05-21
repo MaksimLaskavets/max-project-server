@@ -1,12 +1,18 @@
-const express = require("express");
-const PostController = require("../controllers/Post");
+import express from "express";
+import {
+  findAll,
+  findOne,
+  create,
+  update,
+  destroy,
+} from "../controllers/Post.js";
 
 const router = express.Router();
 
-router.get("/", PostController.findAll);
-router.get("/:id", PostController.findOne);
-router.post("/", PostController.create);
-router.patch("/:id", PostController.update);
-router.delete("/:id", PostController.destroy);
+router.get("/", findAll);
+router.get("/:id", findOne);
+router.post("/", create);
+router.patch("/:id", update);
+router.delete("/:id", destroy);
 
-module.exports = router;
+export default router;

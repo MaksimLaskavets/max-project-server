@@ -1,19 +1,20 @@
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
-const cookieParser = require("cookie-parser");
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
+
+import dbConfig from "./config/database.config.js";
+import UserRoute from "./app/routes/User.js";
+import PostRoute from "./app/routes/Post.js";
+import AuthRoutes from "./app/routes/authRoutes.js";
+import CommentRoutes from "./app/routes/Comment.js";
+
 const corsOptions = {
   origin: "http://localhost:3000",
   credential: true,
   optionSuccessStatus: 200,
 };
-
-const dbConfig = require("./config/database.config.js");
-const UserRoute = require("./app/routes/User");
-const PostRoute = require("./app/routes/Post");
-const AuthRoutes = require("./app/routes/authRoutes");
-const CommentRoutes = require("./app/routes/Comment");
 
 const app = express();
 

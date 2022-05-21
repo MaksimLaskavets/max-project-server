@@ -1,7 +1,7 @@
-const PostModel = require("../model/post");
-const User = require("../model/user");
+import PostModel from "../model/post.js";
+import User from "../model/user.js";
 
-exports.create = async (req, res) => {
+export const create = async (req, res) => {
   try {
     const { title, body, user } = req.body;
 
@@ -9,7 +9,7 @@ exports.create = async (req, res) => {
       res.status(400).send({ message: "Content can not be empty!" });
     }
 
-    const currentUser = await User.findById(user);
+    const currentUser = await User.findById(user).populate("posts");
 
     if (!currentUser) {
       res.status(400).send({ message: "User doesn't exist " });
@@ -27,25 +27,17 @@ exports.create = async (req, res) => {
 
     console.log(post);
 
-    await currentUser
-      .save()
-      .then((newPost) => {
-        res.send({
-          message: "Post created successfully!!",
-          post: newPost,
-        });
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: err.message || "Some error occurred while creating post",
-        });
-      });
+    await currentUser.save();
+    res.status(200).json({
+      message: "Post created successfully!!",
+      post: newPost,
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-exports.findAll = async (req, res) => {
+export const findAll = async (req, res) => {
   try {
     const post = await PostModel.find();
     res.status(200).json(post);
@@ -54,7 +46,7 @@ exports.findAll = async (req, res) => {
   }
 };
 
-exports.findOne = async (req, res) => {
+export const findOne = async (req, res) => {
   try {
     const post = await PostModel.findById(req.params.id).populate("user");
     res.status(200).json(post);
@@ -63,7 +55,7 @@ exports.findOne = async (req, res) => {
   }
 };
 
-exports.update = async (req, res) => {
+export const update = async (req, res) => {
   if (!req.body) {
     res.status(400).send({
       message: "Data to update can not be empty!",
@@ -89,7 +81,7 @@ exports.update = async (req, res) => {
     });
 };
 
-exports.destroy = async (req, res) => {
+export const destroy = async (req, res) => {
   await PostModel.findByIdAndRemove(req.params.id)
     .then((data) => {
       if (!data) {

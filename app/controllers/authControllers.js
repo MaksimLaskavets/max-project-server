@@ -1,4 +1,5 @@
-const User = require("../model/user");
+import User from "../model/user.js";
+
 const alertError = (err) => {
   let errors = { name: "", userName: "", password: "", email: "" };
   //   console.log(`error message: ${err.message}`);
@@ -14,7 +15,8 @@ const alertError = (err) => {
   }
   return errors;
 };
-exports.signup = async (req, res) => {
+
+export const signup = async (req, res) => {
   const { password, name, userName, email } = req.body;
   try {
     const user = await User.create({ password, name, userName, email });
@@ -25,10 +27,10 @@ exports.signup = async (req, res) => {
   }
 };
 
-exports.login = (req, res) => {
+export const login = (req, res) => {
   res.send("login");
 };
 
-exports.logout = (req, res) => {
+export const logout = (req, res) => {
   res.send("logout");
 };

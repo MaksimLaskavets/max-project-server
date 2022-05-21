@@ -1,6 +1,6 @@
-const UserModel = require("../model/user");
+import UserModel from "../model/user.js";
 
-exports.create = async (req, res) => {
+export const create = async (req, res) => {
   if (!req.body.email && !req.body.name && !req.body.password) {
     res.status(400).send({ message: "Content can not be empty!" });
   }
@@ -28,7 +28,7 @@ exports.create = async (req, res) => {
     });
 };
 
-exports.findAll = async (req, res) => {
+export const findAll = async (req, res) => {
   try {
     const user = await UserModel.find();
     res.status(200).json(user);
@@ -37,7 +37,7 @@ exports.findAll = async (req, res) => {
   }
 };
 
-exports.findOne = async (req, res) => {
+export const findOne = async (req, res) => {
   try {
     const user = await UserModel.findById(req.params.id);
     res.status(200).json(user);
@@ -46,7 +46,7 @@ exports.findOne = async (req, res) => {
   }
 };
 
-exports.update = async (req, res) => {
+export const update = async (req, res) => {
   if (!req.body) {
     res.status(400).send({
       message: "Data to update can not be empty!",
@@ -72,7 +72,7 @@ exports.update = async (req, res) => {
     });
 };
 
-exports.remove = async (req, res) => {
+export const remove = async (req, res) => {
   await UserModel.findByIdAndRemove(req.params.id)
     .then((data) => {
       if (!data) {
