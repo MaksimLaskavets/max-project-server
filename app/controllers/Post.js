@@ -64,6 +64,10 @@ exports.update = async (req, res) => {
       res.status(400).send({ message: "Data to update can not be empty!" });
     }
 
+    if (id.length !== 24) {
+      res.status(400).send({ message: "Id is not valid" });
+    }
+
     //  if (id.match(/^[0-9a-fA-F]{24}$/)) {
     //    res.status(404).send({ message: "Post doesn't exist " });
     //  }
@@ -73,8 +77,6 @@ exports.update = async (req, res) => {
     if (!post) {
       res.status(404).send({ message: "Post doesn't exist " });
     }
-
-    console.log(post);
 
     await PostModel.findByIdAndUpdate(id, req.body, {
       useFindAndModify: false,
