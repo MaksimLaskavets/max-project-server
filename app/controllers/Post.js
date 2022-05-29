@@ -1,5 +1,6 @@
 const PostModel = require("../model/post");
 const User = require("../model/user");
+const mongoose = require("mongoose");
 
 exports.create = async (req, res) => {
   try {
@@ -12,7 +13,7 @@ exports.create = async (req, res) => {
     const currentUser = await User.findById(user);
 
     if (!currentUser) {
-      res.status(400).send({ message: "User doesn't exist " });
+      res.status(404).send({ message: "User doesn't exist " });
     }
 
     const post = new PostModel({
@@ -25,21 +26,12 @@ exports.create = async (req, res) => {
 
     currentUser.posts.push(post._id);
 
-    console.log(post);
+    await currentUser.save();
 
-    await currentUser
-      .save()
-      .then((newPost) => {
-        res.send({
-          message: "Post created successfully!!",
-          post: newPost,
-        });
-      })
-      .catch((err) => {
-        res.status(500).send({
-          message: err.message || "Some error occurred while creating post",
-        });
-      });
+    res.status(200).json({
+      message: "Post created successfully!!",
+      post: newPost,
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -50,7 +42,7 @@ exports.findAll = async (req, res) => {
     const post = await PostModel.find();
     res.status(200).json(post);
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
@@ -59,52 +51,68 @@ exports.findOne = async (req, res) => {
     const post = await PostModel.findById(req.params.id).populate("user");
     res.status(200).json(post);
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
 exports.update = async (req, res) => {
-  if (!req.body) {
-    res.status(400).send({
-      message: "Data to update can not be empty!",
+  try {
+    const { title, body } = req.body;
+    const id = req.params.id;
+
+    if (!title || !body) {
+      res.status(400).send({ message: "Data to update can not be empty!" });
+    }
+
+    //  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+    //    res.status(404).send({ message: "Post doesn't exist " });
+    //  }
+
+    const post = await PostModel.findById(id).populate("user");
+
+    if (!post) {
+      res.status(404).send({ message: "Post doesn't exist " });
+    }
+
+    console.log(post);
+
+    await PostModel.findByIdAndUpdate(id, req.body, {
+      useFindAndModify: false,
     });
+
+    res.status(200).json({
+      message: "Post updated successfully!!",
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
-
-  const id = req.params.id;
-
-  await PostModel.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
-    .then((data) => {
-      if (!data) {
-        res.status(404).send({
-          message: `Post not found.`,
-        });
-      } else {
-        res.send({ message: "Post updated successfully." });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message,
-      });
-    });
 };
 
 exports.destroy = async (req, res) => {
-  await PostModel.findByIdAndRemove(req.params.id)
-    .then((data) => {
-      if (!data) {
-        res.status(404).send({
-          message: `Post not found.`,
-        });
-      } else {
-        res.send({
-          message: "Post deleted successfully!",
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message,
-      });
+  try {
+    const id = req.params.id;
+
+    const post = await PostModel.findById(id).populate("user");
+
+    if (!post) {
+      res.status(404).json({ message: "Post not found" });
+    }
+
+    await PostModel.findByIdAndRemove(id);
+
+    const currentUser = await User.findById(post.user._id).populate("posts");
+
+    //  currentUser.posts = currentUser.posts.filter(
+    //    (post) => post.user._id !== req.params.id
+    //  );
+
+    currentUser.save();
+
+    res.status(200).json({
+      message: "Post deleted successfully!!",
+      currentUser,
     });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
