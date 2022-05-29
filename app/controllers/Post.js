@@ -55,6 +55,18 @@ exports.findOne = async (req, res) => {
   }
 };
 
+exports.find = async (req, res) => {
+  try {
+    const searchedField = req.query.title;
+    const post = await PostModel.find({
+      title: { $regex: searchedField, $options: "$i" },
+    });
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 exports.update = async (req, res) => {
   try {
     const { title, body } = req.body;
