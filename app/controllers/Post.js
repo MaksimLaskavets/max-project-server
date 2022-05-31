@@ -39,7 +39,10 @@ exports.create = async (req, res) => {
 
 exports.findAll = async (req, res) => {
   try {
-    const post = await PostModel.find();
+    const { page = 1, limit = 10 } = req.query;
+    const post = await PostModel.find()
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
     res.status(200).json(post);
   } catch (error) {
     res.status(400).json({ message: error.message });
