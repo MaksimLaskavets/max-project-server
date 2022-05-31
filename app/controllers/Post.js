@@ -39,8 +39,22 @@ exports.create = async (req, res) => {
 
 exports.findAll = async (req, res) => {
   try {
-    const post = await PostModel.find();
-    res.status(200).json(post);
+    const searchedField = req.query.title;
+    const { page = 1, limit = 10 } = req.query;
+
+    if (!searchedField) {
+      const post = await PostModel.find()
+        .limit(limit * 1)
+        .skip((page - 1) * limit);
+      res.status(200).json(post);
+    } else {
+      const post = await PostModel.find({
+        title: { $regex: searchedField, $options: "$i" },
+      })
+        .limit(limit * 1)
+        .skip((page - 1) * limit);
+      res.status(200).json(post);
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -54,6 +68,18 @@ exports.findOne = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+// exports.find = async (req, res) => {
+//   try {
+//     const searchedField = req.query.title;
+//     const post = await PostModel.find({
+//       title: { $regex: searchedField, $options: "$i" },
+//     });
+//     res.status(200).json(post);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// };
 
 exports.update = async (req, res) => {
   try {
