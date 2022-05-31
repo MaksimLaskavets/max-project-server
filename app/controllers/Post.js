@@ -1,6 +1,5 @@
 const PostModel = require("../model/post");
 const User = require("../model/user");
-const mongoose = require("mongoose");
 
 exports.create = async (req, res) => {
   try {
@@ -69,18 +68,6 @@ exports.findOne = async (req, res) => {
   }
 };
 
-// exports.find = async (req, res) => {
-//   try {
-//     const searchedField = req.query.title;
-//     const post = await PostModel.find({
-//       title: { $regex: searchedField, $options: "$i" },
-//     });
-//     res.status(200).json(post);
-//   } catch (error) {
-//     res.status(400).json({ message: error.message });
-//   }
-// };
-
 exports.update = async (req, res) => {
   try {
     const { title, body } = req.body;
@@ -93,10 +80,6 @@ exports.update = async (req, res) => {
     if (id.length !== 24) {
       res.status(400).send({ message: "Id is not valid" });
     }
-
-    //  if (id.match(/^[0-9a-fA-F]{24}$/)) {
-    //    res.status(404).send({ message: "Post doesn't exist " });
-    //  }
 
     const post = await PostModel.findById(id).populate("user");
 
@@ -129,10 +112,6 @@ exports.destroy = async (req, res) => {
     await PostModel.findByIdAndRemove(id);
 
     const currentUser = await User.findById(post.user._id).populate("posts");
-
-    //  currentUser.posts = currentUser.posts.filter(
-    //    (post) => post.user._id !== req.params.id
-    //  );
 
     currentUser.save();
 
